@@ -1,0 +1,21 @@
+const cities = [
+  "Abu Dhabi", "Addis Ababa", "Amman", "Amsterdam", "Antananarivo", 
+  "Athens", "Auckland", "Baghdad", "Bangkok", "Barcelona", 
+  "Beijing", "Beirut", "Berlin", "Bogotá", "Boston", 
+  "Brussels", "Buenos Aires", "Cairo", "Cape Town", "Caracas", 
+  "Chicago", "Damascus", "Delhi", "Dhaka", "Dubai", 
+  "Dublin", "Frankfurt", "Guangzhou", "Hanoi", "Havana", 
+  "Helsinki", "Hong Kong", "Honolulu", "Istanbul", "Jakarta", 
+  "Karachi", "Kathmandu", "Kinshasa", "Kuala Lumpur", "Kyiv", 
+  "Lagos", "Las Vegas", "Lima", "London", "Los Angeles", 
+  "Luanda", "Madrid", "Manila", "Mecca", "Mexico City", 
+  "Miami", "Milan", "Moscow", "Mumbai", "New Delhi", 
+  "New York", "Nuuk", "Osaka", "Oslo", "Paris", 
+  "Prague", "Reykjavik", "Rio de Janeiro", "Riyadh", "Rome", 
+  "Saint Petersburg", "San Francisco", "Santiago", "Seoul", "Shanghai", 
+  "Shenzhen", "Singapore", "Stockholm", "Sydney", "São Paulo", 
+  "Taipei", "Tehran", "Tel Aviv", "Tokyo", "Toronto", 
+  "Vancouver", "Vienna", "Warsaw", "Washington, D.C.", "Yangon"
+];
+
+{http://localhost:5172/analytics?userId=${userId}}
