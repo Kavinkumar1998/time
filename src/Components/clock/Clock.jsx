@@ -94,25 +94,35 @@ const MainClock = () => {
   }, [dispatch, location.latitude, location.longitude]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      const newLocalTime = new Date();
-      setCurrentLocalTime(newLocalTime);
+    // Check if Time data is valid
+    if (Time?.statusCode === 200 && Time?.data?.currentLocalTime) {
+      const initialLocalTime = new Date(Time.data.currentLocalTime);
+      setCurrentLocalTime(initialLocalTime);
 
-      const updatedWorldTimes = {};
-      cities.forEach(city => {
-        const cityTime = new Date().toLocaleTimeString('en-US', {
-          timeZone: city.timeZone,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
+      // Start ticking the local time by 1 second every second
+      const intervalId = setInterval(() => {
+        setCurrentLocalTime((prevTime) => new Date(prevTime.getTime() + 1000));
+
+        // Update world times for each city
+        const updatedWorldTimes = {};
+        cities.forEach((city) => {
+          const cityTime = new Date().toLocaleTimeString('en-US', {
+            timeZone: city.timeZone,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          });
+          updatedWorldTimes[city.name] = cityTime;
         });
-        updatedWorldTimes[city.name] = cityTime;
-      });
-      setWorldTimes(updatedWorldTimes);
-    }, 1000);
+        setWorldTimes(updatedWorldTimes);
+      }, 1000); // Runs every second
 
-    return () => clearInterval(intervalId);
-  }, [cities]);
+      return () => clearInterval(intervalId); // Cleanup on unmount
+    } else {
+      console.error('Invalid Time data:', Time);
+    }
+  }, [Time?.statusCode, Time?.data?.currentLocalTime]); // Depend only on statusCode and currentLocalTime
+  
 
   useEffect(() => {
     if (currentLocalTime) {
