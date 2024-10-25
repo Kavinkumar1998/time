@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLocation, getTime } from '../Redux/Slice';
+import { getLocation, getTime, getWeather } from '../Redux/Slice';
 import { MapContainer, TileLayer, Marker,Popup } from 'react-leaflet'
 import Clock from 'react-clock'
 
@@ -10,7 +10,7 @@ import 'react-clock/dist/Clock.css';
 const MainClock = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { Time, Location, isLoading } = useSelector((state) => state.time);
+  const { Time, Location,Weather, isLoading } = useSelector((state) => state.time);
 
   const [currentLocalTime, setCurrentLocalTime] = useState(new Date());
   const [formattedDate, setFormattedDate] = useState('');
@@ -90,6 +90,7 @@ const MainClock = () => {
       setPosition(positionData)
       dispatch(getLocation(data));
       dispatch(getTime(data));
+      dispatch(getWeather(data));
     }
   }, [dispatch, location.latitude, location.longitude]);
 
@@ -159,6 +160,33 @@ const MainClock = () => {
  
     navigate(`/timebylocation/${Input}`);
   }
+  const WeatherData = Weather?.data ?.current|| {};
+  const { dewpoint_c,feelslike_c,heatindex_c,humidity,pressure_mb,temp_c,uv,vis_km,wind_degree,wind_dir,wind_kph}= WeatherData
+  console.log(WeatherData)
+ const weatherCondition = Weather?.data ?.current.condition|| {};
+ const {text,icon}=weatherCondition
+  const windDirectionsToDegrees = {
+    N: 0,
+    NNE: 22.5,
+    NE: 45,
+    ENE: 67.5,
+    E: 90,
+    ESE: 112.5,
+    SE: 135,
+    SSE: 157.5,
+    S: 180,
+    SSW: 202.5,
+    SW: 225,
+    WSW: 247.5,
+    W: 270,
+    WNW: 292.5,
+    NW: 315,
+    NNW: 337.5
+  };
+
+  // Retrieve the rotation angle for the current wind direction
+  const windRotationAngle = windDirectionsToDegrees[wind_dir] || 0;
+
   return (
     <div className="pt-8">
 
@@ -196,7 +224,7 @@ const MainClock = () => {
     alignItems: "center", // Centers horizontally
     justifyContent: "center", // Centers vertically
     width: "60vw",
-    height: "50vh", // Must have a height to enable vertical centering
+    height: "80vh", // Must have a height to enable vertical centering
     textAlign: "center",
     margin: "0 auto", // Centers the container itself horizontally if needed
   }}
@@ -210,12 +238,51 @@ const MainClock = () => {
   <span className='text-4xl font-bold text-white'>
     {formattedDate}, week {weekNumber}
   </span>
+<div>
+          <span className='text-4xl font-bold text-white'>
+            WEATHER in {town || ''} {state_district || 'N/A'}, {state || 'N/A'}, {country || 'N/A'} now:
+          </span>
+          <div>
+          <span className='text-xl font-bold text-white'>{temp_c}°C Feels like {feelslike_c}°C</span>
+            </div>
+            <div>
+            <div className="flex justify-center items-center space-x-2">
+  <img src={icon} alt="Weather icon" className="w-8 h-8" />
+  <span className="text-xl font-bold text-white">{text}</span>
+</div>
+            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div  className="border rounded-lg p-8">         
+              <span className='text-xl font-bold text-white'>Humidity :{humidity}% </span>
+               </div>
+               <div  className="border rounded-lg p-8">         
+              <span className='text-xl font-bold text-white'>Pressure : {pressure_mb} mb</span>
+               </div>
+               <div  className="border rounded-lg p-8">         
+              <span className='text-xl font-bold text-white'>Visibility :{vis_km} km </span>
+               </div>
+               <div  className="border rounded-lg p-8">         
+              <span className='text-xl font-bold text-white'>Dewpoint : {dewpoint_c}°C</span>
+               </div>
+               <div  className="border rounded-lg p-8">         
+              <span className='text-xl font-bold text-white'>Wind : {wind_kph} km/h {wind_dir}<span className="ml-2 text-2xl font-bold text-white"
+              style={{ display: "inline-block", transform: `rotate(${windRotationAngle}deg)` }}>
+          ↑
+        </span></span>
+               </div>
+               <div  className="border rounded-lg p-8">         
+              <span className='text-xl font-bold text-white'>UV Index : {uv} </span>
+               </div>
+            </div>
+          </div>
+  
+
 </div>
 
 
 
         {(position && position.length === 2 && position[0] !== null && position[1] !== null) ? (
-           <div style={{ height: "40vh" }}className="flex flex-row gap-4 min-h-screen w-full mt-8 " >
+           <div style={{ height: "60vh" }}className="flex flex-row gap-4 min-h-screen w-full mt-8 " >
 
           <div style={{height: "40vh", width: "50vw" }} >
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -250,7 +317,7 @@ const MainClock = () => {
       )}    
       </div>
      
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-2 p-4  mt-8 m-8">
+      <div className=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-2 p-4 pt-8">
   {otherCities.map((city) => (
     <div key={city} className="card p-4 ">
       <span className='text-xl font-bold text-white' onClick={() => navigateToCity(city)}>{city}</span>
