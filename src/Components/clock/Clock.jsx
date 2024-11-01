@@ -239,39 +239,37 @@ const MainClock = () => {
     {formattedDate}, week {weekNumber}
   </span>
 <div>
-          <span className='text-4xl font-bold text-white'>
-            WEATHER in {town || ''} {state_district || 'N/A'}, {state || 'N/A'}, {country || 'N/A'} now:
-          </span>
+        
           <div>
-          <span className='text-xl font-bold text-white'>{temp_c}°C Feels like {feelslike_c}°C</span>
+          <span className='text-lg font-bold text-white'>{temp_c}°C Feels like {feelslike_c}°C</span>
             </div>
             <div>
             <div className="flex justify-center items-center space-x-2">
   <img src={icon} alt="Weather icon" className="w-8 h-8" />
-  <span className="text-xl font-bold text-white">{text}</span>
+  <span className="text-lg font-bold text-white">{text}</span>
 </div>
             </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Humidity :{humidity}% </span>
+          <div >         
+              <span className='text-lg font-bold text-white'>Humidity :{humidity}% </span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Pressure : {pressure_mb} mb</span>
+               <div>         
+              <span className='text-lg font-bold text-white'>Pressure : {pressure_mb} mb</span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Visibility :{vis_km} km </span>
+               <div>         
+              <span className='text-lg font-bold text-white'>Visibility :{vis_km} km </span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Dewpoint : {dewpoint_c}°C</span>
+               <div >         
+              <span className='text-lg font-bold text-white'>Dewpoint : {dewpoint_c}°C</span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Wind : {wind_kph} km/h {wind_dir}<span className="ml-2 text-2xl font-bold text-white"
+               <div >         
+              <span className='text-lg font-bold text-white'>Wind : {wind_kph} km/h {wind_dir}<span className="ml-2 text-2xl font-bold text-white"
               style={{ display: "inline-block", transform: `rotate(${windRotationAngle}deg)` }}>
           ↑
         </span></span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>UV Index : {uv} </span>
+               <div >         
+              <span className='text-lg font-bold text-white'>UV Index : {uv} </span>
                </div>
             </div>
           </div>
@@ -282,7 +280,7 @@ const MainClock = () => {
 
 
         {(position && position.length === 2 && position[0] !== null && position[1] !== null) ? (
-           <div style={{ height: "60vh" }}className="flex flex-row gap-4 min-h-screen w-full mt-8 " >
+           <div style={{ height: "60vh" }}className="flex flex-row gap-4 min-h-screen w-full " >
 
           <div style={{height: "40vh", width: "50vw" }} >
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -317,7 +315,7 @@ const MainClock = () => {
       )}    
       </div>
      
-      <div className=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-2 p-4 pt-8">
+      <div className=" grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-8 gap-2 p-4 mt-8 pt-28">
   {otherCities.map((city) => (
     <div key={city} className="card p-4 ">
       <span className='text-xl font-bold text-white' onClick={() => navigateToCity(city)}>{city}</span>

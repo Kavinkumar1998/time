@@ -21,7 +21,29 @@ const TimeByLocation = () => {
   // Get state data from Redux
   const { Time, Location,Weather, isLoading, error: reduxError } = useSelector((state) => state.time);
 
-
+  const citiesWithTimeZones = [
+    { name: "Tokyo", timeZone: "Asia/Tokyo" },
+    { name: "Beijing", timeZone: "Asia/Shanghai" },
+    { name: "Paris", timeZone: "Europe/Paris" },
+    { name: "London", timeZone: "Europe/London" },
+    { name: "New York", timeZone: "America/New_York" },
+    { name: "Los Angeles", timeZone: "America/Los_Angeles" },
+    { name: "Chicago", timeZone: "America/Chicago" },
+    { name: "Toronto", timeZone: "America/Toronto" },
+    { name: "São Paulo", timeZone: "America/Sao_Paulo" },
+    { name: "Lagos", timeZone: "Africa/Lagos" },
+    { name: "Zurich", timeZone: "Europe/Zurich" },
+    { name: "Johannesburg", timeZone: "Africa/Johannesburg" },
+    { name: "Cairo", timeZone: "Africa/Cairo" },
+    { name: "Istanbul", timeZone: "Europe/Istanbul" },
+    { name: "Moscow", timeZone: "Europe/Moscow" },
+    { name: "Dubai", timeZone: "Asia/Dubai" },
+    { name: "Mumbai", timeZone: "Asia/Kolkata" },
+    { name: "Hong Kong", timeZone: "Asia/Hong_Kong" },
+    { name: "Shanghai", timeZone: "Asia/Shanghai" },
+    { name: "Singapore", timeZone: "Asia/Singapore" },
+    { name: "Sydney", timeZone: "Australia/Sydney" }
+  ];
 
   useEffect(() => {
     if (city) {
@@ -116,6 +138,16 @@ const TimeByLocation = () => {
 
   // Retrieve the rotation angle for the current wind direction
   const windRotationAngle = windDirectionsToDegrees[wind_dir] || 0;
+
+  const calculateTimeDifference = (cityTimeZone) => {
+    const cityTime = new Date().toLocaleString("en-US", { timeZone: cityTimeZone });
+    const cityTimeObj = new Date(cityTime);
+    const difference = (cityTimeObj - currentLocalTime) / (1000 * 60 * 60);
+    return {
+      value: Math.abs(difference.toFixed(1)),
+      direction: difference >= 0 ? 'ahead' : 'behind'
+    };
+  };
   return (
     <div className="pt-8">
   
@@ -157,7 +189,7 @@ const TimeByLocation = () => {
     alignItems: "center", // Centers horizontally
     justifyContent: "center", // Centers vertically
     width: "60vw",
-    height: "50vh", // Must have a height to enable vertical centering
+    height: "60vh", // Must have a height to enable vertical centering
     textAlign: "center",
     margin: "0 auto", // Centers the container itself horizontally if needed
   }}>
@@ -166,39 +198,37 @@ const TimeByLocation = () => {
          <p className="text-9xl font-bold text-white">{new Date(currentLocalTime).toLocaleTimeString()}</p>
          <span className='text-4xl font-bold text-white'>{formattedDate}, week {weekNumber}</span>
          <div>
-          <span className='text-4xl font-bold text-white'>
-            WEATHER in {city} now:
-          </span>
+  
           <div>
-          <span className='text-xl font-bold text-white'>{temp_c}°C Feels like {feelslike_c}°C</span>
+          <span className='text-lg font-bold text-white'>{temp_c}°C Feels like {feelslike_c}°C</span>
             </div>
             <div>
             <div className="flex justify-center items-center space-x-2">
   <img src={icon} alt="Weather icon" className="w-8 h-8" />
-  <span className="text-xl font-bold text-white">{text}</span>
+  <span className="text-lg font-bold text-white">{text}</span>
 </div>
             </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Humidity :{humidity}% </span>
+          <div  >         
+              <span className='text-lg font-bold text-white'>Humidity :{humidity}% </span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Pressure : {pressure_mb} mb</span>
+               <div >         
+              <span className='text-lg font-bold text-white'>Pressure : {pressure_mb} mb</span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Visibility :{vis_km} km </span>
+               <div >         
+              <span className='text-lg font-bold text-white'>Visibility :{vis_km} km </span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Dewpoint : {dewpoint_c}°C</span>
+               <div >         
+              <span className='text-lg font-bold text-white'>Dewpoint : {dewpoint_c}°C</span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>Wind : {wind_kph} km/h {wind_dir}<span className="ml-2 text-2xl font-bold text-white"
+               <div >         
+              <span className='text-lg font-bold text-white'>Wind : {wind_kph} km/h {wind_dir}<span className="ml-2 text-2xl font-bold text-white"
               style={{ display: "inline-block", transform: `rotate(${windRotationAngle}deg)` }}>
           ↑
         </span></span>
                </div>
-               <div  className="border rounded-lg p-8">         
-              <span className='text-xl font-bold text-white'>UV Index : {uv} </span>
+               <div >         
+              <span className='text-lg font-bold text-white'>UV Index : {uv} </span>
                </div>
             </div>
           </div>
@@ -207,9 +237,44 @@ const TimeByLocation = () => {
 
           {(position && position.length === 2 && position[0] !== null && position[1] !== null) ? (
      
-     <div style={{ height: "40vh" }}className="flex flex-row gap-4 min-h-screen w-full mt-8 " >
+     <div style={{ height: "40vh" }}className="flex flex-row gap-4 min-h-screen w-full mt-8  " >
 
-<div  className="card border rounded-lg"style={{height: "40vh", width: "50vw" }}></div> 
+<div  className="card border rounded-lg group overflow-hidden hover:overflow-y-scroll h-full"style={{height: "50vh", width: "50vw" }}>
+<h2 className='text-2xl font-bold text-white mt-4'>Time Difference</h2>
+<ul className="space-y-2">
+  {citiesWithTimeZones.map(({ name, timeZone }) => {
+    const { value, direction } = calculateTimeDifference(timeZone);
+    return (
+      <li key={name} className="flex items-center text-white">
+        <span className="w-32 font-bold">{name}:</span>
+        <div
+          className={`flex items-center ${direction === 'ahead' ? 'justify-start' : 'justify-end'} w-full`}
+          style={{
+            position: 'relative',
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#2a2a2a',
+            borderRadius: '8px',
+            padding: '8px',
+            overflow: 'hidden',
+          }}
+        >
+          <div
+            style={{
+              width: `${Math.min(value, 12) * 8}%`,
+              backgroundColor: direction === 'ahead' ? '#4CAF50' : '#FF5722',
+              height: '100%',
+              position: 'absolute',
+              [direction === 'ahead' ? 'left' : 'right']: 0,
+              borderRadius: direction === 'ahead' ? '8px 0 0 8px' : '0 8px 8px 0',
+            }}
+          ></div>
+          <span className="relative z-10 px-2">{direction === 'ahead' ? `+${value} hrs` : `-${value} hrs`}</span>
+        </div>
+      </li>
+    );
+  })}
+</ul></div> 
 
 <div  style={{ height: "50vh", width: "50vw" }}>
     <MapContainer className='border rounded-lg' center={position} zoom={10} scrollWheelZoom={true} style={{ height: "100%", width: "90%" }}>
