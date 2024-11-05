@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
   Location: {},
+  LocationData:{},
   Time: {},
   Weather: {},
   isLoading: false,
@@ -112,7 +113,31 @@ export const getWeather = createAsyncThunk(
   }
 );
 
-
+export const getLocationData = createAsyncThunk(
+  "time/getLocationData",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await fetch( `https://en.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&exintro&explaintext&titles=${data}`,
+        {
+          method: "GET",
+          headers: {
+            "content-type": "application/json",
+          },
+        }
+      );
+      const result = await response.json();
+      const statusCode = response.status;
+      if (response.ok) {
+        return { statusCode, data: result };
+      } else {
+        return rejectWithValue({ error: result });
+      }
+    } catch (error) {
+      console.log(error)
+      return rejectWithValue({ error: error.message });
+    }
+  }
+);
 
 const TimeSlice = createSlice({
   name: "Time",
@@ -172,6 +197,19 @@ const TimeSlice = createSlice({
         state.isLoading = false;
         state.Weather = {};
         state.error = action.payload?.error || "Failed to fetch Weather data";
+      }) 
+      .addCase(getLocationData.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getLocationData.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.LocationData = action.payload;
+        state.error = "";
+      })
+      .addCase(getLocationData.rejected, (state, action) => {
+        state.isLoading = false;
+        state.LocationData = {};
+        state.error = action.payload?.error || "Failed to fetch Location data";
       }) 
   },
 });

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getLocation, getTime, getWeather } from '../Redux/Slice';
+import { getLocation, getLocationData, getTime, getWeather } from '../Redux/Slice';
 import { MapContainer, TileLayer, Marker,Popup } from 'react-leaflet'
 import Clock from 'react-clock'
 
@@ -10,7 +10,7 @@ import 'react-clock/dist/Clock.css';
 const MainClock = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { Time, Location,Weather, isLoading } = useSelector((state) => state.time);
+  const { Time, Location,Weather,LocationData, isLoading } = useSelector((state) => state.time);
 
   const [currentLocalTime, setCurrentLocalTime] = useState(new Date());
   const [formattedDate, setFormattedDate] = useState('');
@@ -140,6 +140,26 @@ const MainClock = () => {
 
   const locationData = Location?.data?.address || {};
   const { town, state_district, state, postcode,country } = locationData;
+
+useEffect(() => {
+  // Check if locationData is not empty
+  if (locationData && Object.keys(locationData).length > 0) {
+    // Conditionally use `town` if available; otherwise, fall back to `state_district`
+    const Ldata = town ? town : state_district;
+
+    if (Ldata) {
+      dispatch(getLocationData(Ldata)); // Pass the chosen location to the action
+    }
+  }
+}, [dispatch, locationData, town, state_district]);
+
+
+const pages = LocationData?.data?.query?.pages || {};
+const pageId = Object.keys(pages)[0]; // Get the first key of the pages object
+const extract = pages[pageId]?.extract || 'No information available';
+console.log(extract); // This will log the detailed information about the location
+
+
   const handleSearch = (e) => {
     e.preventDefault();
   
@@ -276,7 +296,13 @@ const MainClock = () => {
   
 
 </div>
-
+{(locationData && Object.keys(locationData).length > 0)?(             <div >         
+              <span className='text-lg font-bold text-white'> {extract} </span>
+               </div>
+):(             <div >         
+  <span className='text-lg font-bold text-white'>Loading</span>
+   </div>
+)}
 
 
         {(position && position.length === 2 && position[0] !== null && position[1] !== null) ? (
