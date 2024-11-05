@@ -166,7 +166,7 @@ console.log(extract); // This will log the detailed information about the locati
     if (searchInput) {
       const Input = formattedInput(searchInput)
 // Replace spaces with underscores
-      navigate(`/timebylocation/${Input}`);
+      navigate(`/${Input}`);
     } else {
       console.log('Please enter a valid location');
     }
@@ -178,7 +178,7 @@ console.log(extract); // This will log the detailed information about the locati
     const Input = formattedInput(city);
     console.log(Input)
  
-    navigate(`/timebylocation/${Input}`);
+    navigate(`/${Input}`);
   }
   const WeatherData = Weather?.data ?.current|| {};
   const { dewpoint_c,feelslike_c,heatindex_c,humidity,pressure_mb,temp_c,uv,vis_km,wind_degree,wind_dir,wind_kph}= WeatherData
@@ -293,16 +293,17 @@ console.log(extract); // This will log the detailed information about the locati
                </div>
             </div>
           </div>
-  
-
-</div>
-{(locationData && Object.keys(locationData).length > 0)?(             <div >         
+          {(locationData && Object.keys(locationData).length > 0)?(
+            <div  className="card group overflow-hidden hover:overflow-y-scroll h-full"style={{height: "50vh", width: "80vw" }}>         
               <span className='text-lg font-bold text-white'> {extract} </span>
                </div>
 ):(             <div >         
   <span className='text-lg font-bold text-white'>Loading</span>
    </div>
 )}
+
+</div>
+
 
 
         {(position && position.length === 2 && position[0] !== null && position[1] !== null) ? (

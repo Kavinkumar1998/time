@@ -13,8 +13,8 @@ function App() {
      <div className="min-h-screen w-full bg-cover bg-center p-0" style={{ backgroundImage: `url(${bg3})` }}>
    
        <Routes>
-       <Route path="/clock" element={<MainClock/>} />
-       <Route path="/timebylocation/:city" element={<TimeByLocation/>} />
+       <Route path="/" element={<MainClock/>} />
+       <Route path="/:city" element={<TimeByLocation/>} />
        </Routes>
  </div>
   )

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate,useParams  } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCoordinates, getTime, getWeather } from '../Redux/Slice'; // Import the actions from your Redux slice
+import { getCoordinates, getLocationData, getTime, getWeather } from '../Redux/Slice'; // Import the actions from your Redux slice
 import { MapContainer, TileLayer, Marker,Popup } from 'react-leaflet'
 const TimeByLocation = () => {
   const [location, setLocation] = useState({
@@ -19,7 +19,7 @@ const TimeByLocation = () => {
   const dispatch = useDispatch();
   const { city } = useParams(); 
   // Get state data from Redux
-  const { Time, Location,Weather, isLoading, error: reduxError } = useSelector((state) => state.time);
+  const { Time, Location,Weather, isLoading,LocationData, error: reduxError } = useSelector((state) => state.time);
 
   const citiesWithTimeZones = [
     { name: "Tokyo", timeZone: "Asia/Tokyo" },
@@ -49,6 +49,7 @@ const TimeByLocation = () => {
     if (city) {
     
       dispatch(getCoordinates(city));  // Dispatch the lat/lon to get the time
+      dispatch(getLocationData(city))
     }
   }, [city, dispatch]);  // Location is a dependency, so the effect will run when Location changes
 
@@ -59,7 +60,7 @@ const TimeByLocation = () => {
     if (searchInput) {
       const Input = formattedInput(searchInput)
 // Replace spaces with underscores
-      navigate(`/timebylocation/${Input}`);
+      navigate(`/${Input}`);
     } else {
       console.log('Please enter a valid location');
     }
@@ -67,7 +68,9 @@ const TimeByLocation = () => {
 
   const formattedInput =(Input)=>{ return Input.trim().replace(/\s+/g, '_'); }
 
-
+  const pages = LocationData?.data?.query?.pages || {};
+  const pageId = Object.keys(pages)[0]; // Get the first key of the pages object
+  const extract = pages[pageId]?.extract || 'No information available';
   // When coordinates are available, dispatch the getTime action to fetch time
   useEffect(() => {
     if (Location?.data?.length > 0) {
@@ -188,8 +191,8 @@ const TimeByLocation = () => {
     flexDirection: "column",
     alignItems: "center", // Centers horizontally
     justifyContent: "center", // Centers vertically
-    width: "60vw",
-    height: "60vh", // Must have a height to enable vertical centering
+    width: "70vw",
+    height: "80vh", // Must have a height to enable vertical centering
     textAlign: "center",
     margin: "0 auto", // Centers the container itself horizontally if needed
   }}>
@@ -232,8 +235,11 @@ const TimeByLocation = () => {
                </div>
             </div>
           </div>
+          <div  className="card group overflow-hidden hover:overflow-y-scroll h-full"style={{height: "50vh", width: "80vw" }} >         
+              <span className='text-lg font-bold text-white '> {extract} </span>
+               </div>
           </div>
-          
+         
 
           {(position && position.length === 2 && position[0] !== null && position[1] !== null) ? (
      
